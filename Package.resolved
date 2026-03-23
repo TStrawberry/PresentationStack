@@ -1,0 +1,24 @@
+{
+  "originHash" : "225dd966fd50206f7d911ae4be4239cd773f453c2bf638ed50e846eef1c5266b",
+  "pins" : [
+    {
+      "identity" : "navigationvalues",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/TStrawberry/NavigationValues",
+      "state" : {
+        "revision" : "0a18224d4896cb1330edd8d9fb9e6455f66620d9",
+        "version" : "1.0.1"
+      }
+    },
+    {
+      "identity" : "swift-syntax",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swiftlang/swift-syntax.git",
+      "state" : {
+        "revision" : "4799286537280063c85a32f09884cfbca301b1a1",
+        "version" : "602.0.0"
+      }
+    }
+  ],
+  "version" : 3
+}

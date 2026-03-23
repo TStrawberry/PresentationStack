@@ -1,0 +1,42 @@
+{
+  "sourceLanguage" : "bn",
+  "strings" : {
+    "Custom sheet" : {
+
+    },
+    "Dismiss last 2" : {
+
+    },
+    "Dismiss to root" : {
+
+    },
+    "Favorites" : {
+
+    },
+    "Home" : {
+
+    },
+    "name" : {
+
+    },
+    "Present fullScreenCover" : {
+
+    },
+    "Present Sheet" : {
+
+    },
+    "Print graph" : {
+
+    },
+    "Profile" : {
+
+    },
+    "Push" : {
+
+    },
+    "Start timer" : {
+
+    }
+  },
+  "version" : "1.2"
+}
