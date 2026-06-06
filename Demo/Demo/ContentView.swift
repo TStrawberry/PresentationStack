@@ -34,34 +34,40 @@ struct Screen: View {
         
         VStack(spacing: 20) {
             TextField("name", text: $bindableSreenContext.stringValue)
+                .accessibilityIdentifier("screen.nameField")
 
             Button("Present Sheet") {
                 Task {
                     await PathContainer.shared.presentationPath.presentSheet(screenContext.stringValue)
                 }
             }
+            .accessibilityIdentifier("screen.presentSheet")
             
             Button("Present fullScreenCover") {
                 Task {
                     await PathContainer.shared.presentationPath.presentFullScreenCover(screenContext.stringValue)
                 }
             }
+            .accessibilityIdentifier("screen.presentFullScreenCover")
 
             Button("Dismiss to root") {
                 Task {
                     await PathContainer.shared.presentationPath.dismissToRoot()
                 }
             }
+            .accessibilityIdentifier("screen.dismissToRoot")
             
             Button("Dismiss last 2") {
                 Task {
                     await PathContainer.shared.presentationPath.dismissLast(2)
                 }
             }
+            .accessibilityIdentifier("screen.dismissLast2")
             
             Button ("Push") {
                 screenContext.navigationPath.wrappedValue.append(screenContext.stringValue)
             }
+            .accessibilityIdentifier("screen.push")
             
             Button("Start timer") {
                 var count = 0
@@ -70,16 +76,19 @@ struct Screen: View {
                     screenContext.stringValue = "\(count)"
                 })
             }
+            .accessibilityIdentifier("screen.startTimer")
             
             Button("Print graph") {
                 print(PathContainer.shared.presentationPath.graph().joined(separator: "\n"))
             }
+            .accessibilityIdentifier("screen.printGraph")
             
             Button("Custom sheet") {
                 isPresented = true
             }
+            .accessibilityIdentifier("screen.customSheet")
         }
-        .withPresentationStack.fullScreenCover(isPresented: $isPresented) {
+        .withPresentationStack.sheet(isPresented: $isPresented) {
             Screen()
                 .modifier(NavigationPathViewModifier())
                 .navigationContext()
