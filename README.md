@@ -1,6 +1,6 @@
 # PresentationStack
 
-A SwiftUI library for a **programmable sheet stack**. Manage presenting and dismissing multiple sheets/fullScreenCover the way you use `NavigationStack` + `NavigationPath`.
+A SwiftUI library for a **programmable prese stack**. Manage presenting and dismissing multiple sheets/fullScreenCover the way you use `NavigationStack` + `NavigationPath`.
 
 ## Why PresentationStack?
 

@@ -1,13 +1,13 @@
 {
-  "originHash" : "225dd966fd50206f7d911ae4be4239cd773f453c2bf638ed50e846eef1c5266b",
+  "originHash" : "5593e3b3259dc93135a8b78c3658565b131b23cf1d798bcb90ccb52faf428c9e",
   "pins" : [
     {
       "identity" : "navigationvalues",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/TStrawberry/NavigationValues",
       "state" : {
-        "revision" : "0a18224d4896cb1330edd8d9fb9e6455f66620d9",
-        "version" : "1.0.1"
+        "revision" : "0cfd8840736dbec9addb10d57edadc752817747d",
+        "version" : "1.0.2"
       }
     },
     {
