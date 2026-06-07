@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "5D7F1624-9365-478A-8D21-635BAE480D17",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "performanceAntipatternCheckerEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:Demo.xcodeproj",
+        "identifier" : "2B84D1CA2FD43928001EDF10",
+        "name" : "DemoUITests"
+      }
+    }
+  ],
+  "version" : 1
+}

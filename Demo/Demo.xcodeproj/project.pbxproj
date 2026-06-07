@@ -26,6 +26,7 @@
 
 /* Begin PBXFileReference section */
 		2B6CD5B02F7C1FBB00731F75 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		2B70F22A2FD598A10083E141 /* DemoUITests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = DemoUITests.xctestplan; path = DemoUITests/DemoUITests.xctestplan; sourceTree = "<group>"; };
 		2B84D1CB2FD43928001EDF10 /* DemoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DemoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2BC7CACB2F5EF9D700F7FFCA /* Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Demo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -81,6 +82,7 @@
 		2BC7CAC22F5EF9D700F7FFCA = {
 			isa = PBXGroup;
 			children = (
+				2B70F22A2FD598A10083E141 /* DemoUITests.xctestplan */,
 				2B6CD5B02F7C1FBB00731F75 /* Localizable.xcstrings */,
 				2BC7CACD2F5EF9D700F7FFCA /* Demo */,
 				2B84D1CC2FD43928001EDF10 /* DemoUITests */,

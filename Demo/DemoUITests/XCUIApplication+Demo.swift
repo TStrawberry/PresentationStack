@@ -23,7 +23,7 @@ extension XCUIApplication {
         if let hittable = elements.last(where: { $0.isHittable }) {
             return hittable
         }
-        return elements.last ?? query.firstMatch
+        return elements.last!
     }
 
     func topmostNameField() -> XCUIElement {
@@ -31,7 +31,7 @@ extension XCUIApplication {
         if let hittable = elements.last(where: { $0.isHittable }) {
             return hittable
         }
-        return elements.last ?? nameFields.firstMatch
+        return elements.last!.textFields.firstMatch
     }
 
     var presentSheetButton: XCUIElement { topmostButton("screen.presentSheet") }
@@ -47,27 +47,27 @@ extension XCUIApplication {
 
     func launchDemo() {
         launch()
-        XCTAssertTrue(tabBars.firstMatch.waitForExistence(timeout: 10))
-        XCTAssertTrue(tabBars.buttons["Home"].waitForExistence(timeout: 10))
-        XCTAssertTrue(presentSheetButton.waitForExistence(timeout: 10))
+        XCTAssertTrue(tabBars.firstMatch.waitForExistence(timeout: 3))
+        XCTAssertTrue(tabBars.buttons["Home"].waitForExistence(timeout: 3))
+        XCTAssertTrue(presentSheetButton.waitForExistence(timeout: 3))
     }
 
     func selectTab(_ name: String) {
         tabBars.buttons[name].tap()
-        XCTAssertTrue(presentSheetButton.waitForExistence(timeout: 10))
+        XCTAssertTrue(presentSheetButton.waitForExistence(timeout: 3))
     }
 
     // MARK: - Actions
 
     func setNameField(_ text: String, file: StaticString = #filePath, line: UInt = #line) {
         let field = nameField
-        XCTAssertTrue(field.waitForExistence(timeout: 10), file: file, line: line)
+        XCTAssertTrue(field.waitForExistence(timeout: 5), file: file, line: line)
         field.clearAndType(text)
     }
 
     func tapPresentSheet(file: StaticString = #filePath, line: UInt = #line) {
         let button = presentSheetButton
-        XCTAssertTrue(button.waitForExistence(timeout: 10), file: file, line: line)
+        XCTAssertTrue(button.waitForExistence(timeout: 3), file: file, line: line)
         let before = presentSheetButtons.count
         button.tap()
         waitForPresentationCount(atLeast: before + 1, file: file, line: line)
@@ -75,7 +75,7 @@ extension XCUIApplication {
 
     func tapPresentFullScreenCover(file: StaticString = #filePath, line: UInt = #line) {
         let button = presentFullScreenCoverButton
-        XCTAssertTrue(button.waitForExistence(timeout: 10), file: file, line: line)
+        XCTAssertTrue(button.waitForExistence(timeout: 3), file: file, line: line)
         let before = presentSheetButtons.count
         button.tap()
         waitForPresentationCount(atLeast: before + 1, file: file, line: line)
@@ -83,14 +83,14 @@ extension XCUIApplication {
 
     func tapDismissToRoot(file: StaticString = #filePath, line: UInt = #line) {
         let button = dismissToRootButton
-        XCTAssertTrue(button.waitForExistence(timeout: 10), file: file, line: line)
+        XCTAssertTrue(button.waitForExistence(timeout: 3), file: file, line: line)
         button.tap()
         waitForPresentationCount(1, file: file, line: line)
     }
 
     func tapDismissLast2(file: StaticString = #filePath, line: UInt = #line) {
         let button = dismissLast2Button
-        XCTAssertTrue(button.waitForExistence(timeout: 10), file: file, line: line)
+        XCTAssertTrue(button.waitForExistence(timeout: 3), file: file, line: line)
         let before = presentSheetButtons.count
         button.tap()
         let expected = max(1, before - 2)
@@ -99,13 +99,13 @@ extension XCUIApplication {
 
     func tapPush(file: StaticString = #filePath, line: UInt = #line) {
         let button = pushButton
-        XCTAssertTrue(button.waitForExistence(timeout: 10), file: file, line: line)
+        XCTAssertTrue(button.waitForExistence(timeout: 3), file: file, line: line)
         button.tap()
     }
 
     func tapCustomSheet(file: StaticString = #filePath, line: UInt = #line) {
         let button = customSheetButton
-        XCTAssertTrue(button.waitForExistence(timeout: 10), file: file, line: line)
+        XCTAssertTrue(button.waitForExistence(timeout: 3), file: file, line: line)
         let before = presentSheetButtons.count
         button.tap()
         waitForPresentationCount(atLeast: before + 1, file: file, line: line)
@@ -115,7 +115,7 @@ extension XCUIApplication {
 
     func waitForPresentationCount(
         _ count: Int,
-        timeout: TimeInterval = 10,
+        timeout: TimeInterval = 3,
         file: StaticString = #filePath,
         line: UInt = #line
     ) {
@@ -136,7 +136,7 @@ extension XCUIApplication {
 
     func waitForPresentationCount(
         atLeast count: Int,
-        timeout: TimeInterval = 10,
+        timeout: TimeInterval = 3,
         file: StaticString = #filePath,
         line: UInt = #line
     ) {
@@ -157,7 +157,7 @@ extension XCUIApplication {
 
     func waitForNameFieldValue(
         _ value: String,
-        timeout: TimeInterval = 10,
+        timeout: TimeInterval = 3,
         file: StaticString = #filePath,
         line: UInt = #line
     ) {
@@ -177,13 +177,13 @@ extension XCUIApplication {
 
     func nameFieldValue(file: StaticString = #filePath, line: UInt = #line) -> String {
         let field = nameField
-        XCTAssertTrue(field.waitForExistence(timeout: 10), file: file, line: line)
+        XCTAssertTrue(field.waitForExistence(timeout: 3), file: file, line: line)
         return field.value as? String ?? ""
     }
 
     func waitForNameFieldValueChange(
         from initial: String,
-        timeout: TimeInterval = 5,
+        timeout: TimeInterval = 3,
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> String {
@@ -203,7 +203,7 @@ extension XCUIApplication {
     }
 
     func waitForNumericNameFieldValue(
-        timeout: TimeInterval = 5,
+        timeout: TimeInterval = 3,
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> String {
@@ -227,7 +227,7 @@ extension XCUIApplication {
 
     func tapStartTimer(file: StaticString = #filePath, line: UInt = #line) {
         let button = startTimerButton
-        XCTAssertTrue(button.waitForExistence(timeout: 10), file: file, line: line)
+        XCTAssertTrue(button.waitForExistence(timeout: 3), file: file, line: line)
         button.tap()
     }
 }
@@ -235,7 +235,11 @@ extension XCUIApplication {
 extension XCUIElement {
     func clearAndType(_ text: String) {
         tap()
-        tap(withNumberOfTaps: 3, numberOfTouches: 1)
+        
+        if let current = value as? String, !current.isEmpty {
+            typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: current.count))
+        }
+
         typeText(text)
     }
 }
