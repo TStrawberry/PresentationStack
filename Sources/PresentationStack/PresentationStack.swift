@@ -30,8 +30,6 @@ public struct PresentationStack<Content: View>: View {
             .onPreferenceChange(ScreenContext.Preference.self, perform: { screenContexts in
                 guard let presentations = screenContexts as? [Presentation] else { return }
                 presentationManager.presentations = presentations
-                
-                print(presentations)
             })
             .screenContext(presentationManager)
             .environment(\.screenContext, root)
@@ -46,16 +44,14 @@ extension View {
                 sheetItem: presentation.sheetItem,
                 fullScreenCoverItem: presentation.fullScreenCoverItem,
                 onDismiss: {
-                    if let custom = presentation.wrappedValue.items.custom {
-                        custom.onDismiss?()
-                        presentation.wrappedValue.items.custom = nil
-                    }
+                    presentation.wrappedValue.config.onDismiss()
+
                     presentation.wrappedValue.sheetItem = nil
                     presentation.wrappedValue.fullScreenCoverItem = nil
                 },
                 content: { item in
-                    if let custom = presentation.wrappedValue.items.custom {
-                        custom.buildContent(item.value)
+                    if let buildContent = presentation.wrappedValue.config.buildContent {
+                        buildContent(item.value)
                     } else {
                         presentation.wrappedValue.resolveView(item)
                     }

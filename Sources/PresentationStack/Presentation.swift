@@ -9,17 +9,16 @@ import SwiftUI
 import NavigationValues
 
 public final class Presentation: ScreenContext {
+    typealias Destinations = [ObjectIdentifier: (AnyIdentifiable, Presentation) -> AnyView]
+    
     @Observable
-    class Items {
-        struct Custom {
-            let onDismiss: (() -> Void)?
-            let buildContent: (AnyIdentifiable) -> AnyView
-        }
-        
+    class Config {
         var item: Item? { sheetItem ?? fullScreenCoverItem }
         var sheetItem: Item?
         var fullScreenCoverItem: Item?
-        @ObservationIgnored var custom: Custom? = nil
+        
+        @ObservationIgnored var onDismiss: () -> Void = { }
+        @ObservationIgnored var buildContent: ((AnyIdentifiable) -> AnyView)? = nil
         
         init(sheetItem: Item? = nil, fullScreenCoverItem: Item? = nil) {
             self.sheetItem = sheetItem
@@ -27,15 +26,13 @@ public final class Presentation: ScreenContext {
         }
     }
     
-    typealias Destinations = [ObjectIdentifier: (AnyIdentifiable, Presentation) -> AnyView]
-    
     public enum Style: Equatable, Hashable, Sendable {
         case sheet
         case fullScreenCover
     }
     
-    public struct Item: Identifiable, Equatable, Hashable, @unchecked Sendable {
-        public var id: UUID = UUID()
+    struct Item: Identifiable, Equatable, Hashable, @unchecked Sendable {
+        let id: UUID = UUID()
         
         let style: Style
         let value: AnyIdentifiable
@@ -46,33 +43,37 @@ public final class Presentation: ScreenContext {
             self.value = AnyIdentifiable(base: value)
         }
         
-        public func hash(into hasher: inout Hasher) {
+        func hash(into hasher: inout Hasher) {
             hasher.combine(style)
             hasher.combine(value.id)
+            hasher.combine(id)
             hasher.finalize()
         }
         
-        public static func == (lhs: Item, rhs: Item) -> Bool {
+        static func == (lhs: Item, rhs: Item) -> Bool {
             lhs.hashValue == rhs.hashValue
         }
     }
     
-    let items: Items = Items()
+    let config: Config = Config()
     var destinations: Destinations = [:]
     var dismissAction: DismissAction?
     
-    public var item: Item? {
-        (previous as? Presentation)?.items.item
+    var isDismissed: Bool {
+        guard let manager = parent as? PresentationManager else { return true }
+        return !manager.presentations.contains(self)
+    }
+ 
+    var item: Item? {
+        (previous as? Presentation)?.config.item
     }
     var sheetItem: Item? {
-        get { items.sheetItem }
-        set { items.sheetItem = newValue }
+        get { config.sheetItem }
+        set { config.sheetItem = newValue }
     }
     var fullScreenCoverItem: Item? {
-        get { items.fullScreenCoverItem }
-        set {
-            items.fullScreenCoverItem = newValue
-        }
+        get { config.fullScreenCoverItem }
+        set { config.fullScreenCoverItem = newValue }
     }
 
     public required init() {
@@ -97,29 +98,44 @@ public final class Presentation: ScreenContext {
     func present<Item: Identifiable>(
         _ item: Item,
         style: Style,
-        onDismiss: (() -> Void)?,
+        onDismiss: (() -> Void)? = nil,
         buildContent: @escaping (AnyIdentifiable) -> AnyView
     ) {
-        items.custom = Items.Custom(onDismiss: onDismiss, buildContent: buildContent)
+        config.buildContent = buildContent
+        if let onDismiss {
+            let origin = config.onDismiss
+            config.onDismiss = {
+                origin()
+                onDismiss()
+            }
+        }
         switch style {
         case .sheet:
-            items.sheetItem = Presentation.Item(style: style, value: item)
+            config.sheetItem = Presentation.Item(style: style, value: item)
         case .fullScreenCover:
-            items.fullScreenCoverItem = Presentation.Item(style: style, value: item)
+            config.fullScreenCoverItem = Presentation.Item(style: style, value: item)
         }
     }
     
     @discardableResult
-    @MainActor func dismiss() -> Bool {
-        guard let dismissAction, item != nil else { return false }
-        dismissAction()
+    @MainActor public func dismiss() async -> Bool {
+        guard let manager = parent as? PresentationManager else { return false }
+        await manager.dismiss(self)
         return true
     }
     
     public override func cleanup() {
         super.cleanup()
         destinations.removeAll()
-        items.custom = nil
+        config.buildContent = nil
+        config.onDismiss = { }
+    }
+    
+    @discardableResult
+    @MainActor func asyncDismiss() -> Bool {
+        guard let dismissAction, item != nil else { return false }
+        dismissAction()
+        return true
     }
 }
 

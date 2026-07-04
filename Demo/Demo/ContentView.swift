@@ -29,6 +29,8 @@ struct Screen: View {
     
     @State var isPresented: Bool = false
     
+    @State var session: PresentationSession? = nil
+    
     var body: some View {
         @Bindable var bindableSreenContext = screenContext
         
@@ -38,10 +40,15 @@ struct Screen: View {
 
             Button("Present Sheet") {
                 Task {
-                    await PathContainer.shared.presentationPath.presentSheet(screenContext.stringValue)
+                    session = PathContainer.shared.presentationPath.sheetPresentation(screenContext.stringValue)
+                    
+                    await session?.present()
                 }
             }
             .accessibilityIdentifier("screen.presentSheet")
+            .onChange(of: session?.status, { oldValue, newValue in
+                print(newValue)
+            })
             
             Button("Present fullScreenCover") {
                 Task {
