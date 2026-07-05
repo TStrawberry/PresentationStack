@@ -15,6 +15,7 @@ PresentationStack offers a unified stack API and declarative destinations so pre
 
 - **Programmable stack** — `present` / `dismiss` via `PresentationManager` (alias `PresentationPath`), including dismiss-to-root, dismiss last *N*, and dismiss to a specific item
 - **Declarative destinations** — `presentationDestination(for:)` registers sheet content by type, similar to `navigationDestination`
+- **Presentation sessions** — `sheetPresentation` / `fullScreenCoverPresentation` return a `PresentationSession` so you can observe presentation lifecycle (`.idle` → `.presented` → `.dismissed`)
 
 ## Requirements
 
@@ -60,7 +61,7 @@ struct RootView: View {
 }
 ```
 
-### 2. Present programically 
+### 2. Present programmatically
 
 From any child view, call the shared path inside a `Task`:
 
@@ -72,10 +73,50 @@ Button("Open detail") {
 }
 ```
 
-The value passed to `presentSheet` must be `Hashable & Sendable`, and its type must be registered with `presentationDestination(for:)` on the root or an ancestor.
+The value passed to `presentSheet` must be `Identifiable`, and its type must be registered with `presentationDestination(for:)` on the root or an ancestor.
 
+### 3. Track presentation lifecycle with `PresentationSession`
 
-### 3. Present as usual
+When you need to know whether a sheet is currently shown or has been dismissed (including swipe-to-dismiss), create a session first, then call `present()`:
+
+```swift
+@State private var session: PresentationSession?
+
+Button("Open detail") {
+  Task {
+    session = router.path.sheetPresentation("detail-1")
+    await session?.present()
+  }
+}
+.onChange(of: session?.status) { _, status in
+  switch status {
+  case .presented:
+    print("Sheet is on screen")
+  case .dismissed:
+    print("Sheet was dismissed")
+  default:
+    break
+  }
+}
+```
+
+`present()` returns the underlying `Presentation` instance once the sheet is on screen. `status` updates to `.dismissed` automatically when the user swipes the sheet away or you call `dismissToRoot()` / `dismissLast(_:)`.
+
+For full-screen covers, use `fullScreenCoverPresentation(_:)` instead:
+
+```swift
+session = router.path.fullScreenCoverPresentation("cover-1")
+await session?.present()
+```
+
+| API | Description |
+|-----|-------------|
+| `sheetPresentation(_:)` | Create a sheet session for an `Identifiable` value |
+| `fullScreenCoverPresentation(_:)` | Create a full-screen cover session |
+| `PresentationSession.present()` | Present and await until the session is on screen |
+| `PresentationSession.status` | `.idle`, `.presented`, or `.dismissed` |
+
+### 4. Present as usual
 
 If you want to continue using SwiftUI’s original sheet/fullScreenCover APIs, you just need to prefix the call with `withPresentationStack` to integrate it with the presentation stack.
 
@@ -88,7 +129,7 @@ var body: some View {
 }
 ```
 
-### 4. Dismiss
+### 5. Dismiss
 
 ```swift
 // Dismiss every presentation back to the root
@@ -107,7 +148,7 @@ The `Demo/` app shows:
 
 - A `TabView` with a separate `NavigationStack` per tab
 - Reading and updating `@ValueEntry` fields on the current `screenContext`
-- Stack operations: `presentSheet`, `dismissToRoot`, `dismissLast`
+- Stack operations: `presentSheet`, `sheetPresentation`, `dismissToRoot`, `dismissLast`
 - A `NavigationStack` inside a sheet destination, wired into the presentation stack
 
 Open `Demo/Demo.xcodeproj` in Xcode and run.
